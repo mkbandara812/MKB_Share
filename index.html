@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MKB Share - Modern File Sharing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50e3c2;
+            --background-color: #f8f9fa;
+            --text-color: #333333;
+            --card-background: #ffffff;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 450px;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            font-size: 1.5rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="file"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        button:hover {
+            background-color: #3a7bd5;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .file-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            background-color: #f1f3f5;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-list li:hover {
+            background-color: #e9ecef;
+        }
+
+        .file-list a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-left: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .file-list a:hover {
+            color: #3a7bd5;
+        }
+
+        #uploadSection, #fileListSection, #forgotPasswordSection {
+            display: none;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-input-wrapper:hover .btn {
+            background-color: #45d0b0;
+        }
+
+        .alert {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+        }
+
+        .alert-error {
+            background-color: var(--error-color);
+        }
+
+        .alert-success {
+            background-color: var(--success-color);
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .switch-form a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .switch-form a:hover {
+            color: #3a7bd5;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MKB Share</h1>
+
+        <div id="loginSection" class="section">
+            <h2>Login</h2>
+            <input type="text" id="loginUsername" placeholder="Username">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button onclick="login()">Login</button>
+            <button onclick="showForgotPassword()">Forgot Password?</button>
+            <div class="switch-form">
+                <a href="register.html" onclick="showRegisterSection()">Don't have an account? Register here</a>
+            </div>
+        </div>
+
+        <div id="registerSection" class="section" style="display: none;">
+            <h2>Register</h2>
+            <input type="text" id="registerUsername" placeholder="Username">
+            <input type="password" id="registerPassword" placeholder="Password">
+            <input type="text" id="securityQuestion" placeholder="Security Question">
+            <input type="text" id="securityAnswer" placeholder="Security Answer">
+            <button onclick="register()">Register</button>
+            <div class="switch-form">
+                <a href="index.html" onclick="showLoginSection()">Already have an account? Login here</a>
+            </div>
+        </div>
+
+        <div id="forgotPasswordSection" class="section" style="display: none;">
+            <h2>Forgot Password</h2>
+            <input type="text" id="forgotUsername" placeholder="Username">
+            <button onclick="retrieveSecurityQuestion()">Submit</button>
+            <div id="securityQuestionSection" style="display: none;">
+                <p id="displaySecurityQuestion"></p>
+                <input type="text" id="forgotSecurityAnswer" placeholder="Security Answer">
+                <button onclick="resetPassword()">Reset Password</button>
+            </div>
+        </div>
+
+        <div id="uploadSection" class="section" style="display: none;">
+            <h2>Upload Files</h2>
+            <div class="file-input-wrapper">
+                <button class="btn">Choose Files</button>
+                <input type="file" id="fileInput" multiple>
+            </div>
+            <button onclick="uploadFiles()">Upload</button>
+            <button onclick="logout()">Logout</button>
+        </div>
+
+        <div id="fileListSection" class="section" style="display: none;">
+            <h2>Your Files</h2>
+            <ul id="fileList" class="file-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Function to show login section
+        function showLoginSection() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('registerSection').style.display = 'none';
+            document.getElementById('forgotPasswordSection').style.display = 'none';
+        }
+
+        // Function to show register section
+        function showRegisterSection() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('registerSection').style.display = 'block';
+            document.getElementById('forgotPasswordSection').style.display = 'none';
+        }
+
+        // Function to show forgot password section
+        function showForgotPassword() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('forgotPasswordSection').style.display = 'block';
+        }
+
+        // Function to handle user registration
+        function register() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+            const securityQuestion = document.getElementById('securityQuestion').value.trim();
+            const securityAnswer = document.getElementById('securityAnswer').value.trim().toLowerCase();
+
+            if (!username || !password || !securityQuestion || !securityAnswer) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            if (localStorage.getItem(username)) {
+                alert('User already exists. Please log in.');
+                showLoginSection();
+                return;
+            }
+
+            // Create a new user
+            const newUser = {
+                password: password,
+                securityQuestion: securityQuestion,
+                securityAnswer: securityAnswer,
+                files: []
+            };
+
+            localStorage.setItem(username, JSON.stringify(newUser));
+            alert('User registered successfully!');
+            showLoginSection();
+        }
+
+        // Function to handle user login
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!username || !password) {
+                alert('Please enter both username and password.');
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem(username));
+
+            if (user && user.password === password) {
+                alert('Login successful!');
+                localStorage.setItem('currentUser', username);
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('uploadSection').style.display = 'block';
+                document.getElementById('fileListSection').style.display = 'block';
+                displayUserFiles();
+            } else {
+                alert('Invalid username or password.');
+            }
+        }
+
+        // Function to retrieve and display the security question
+        function retrieveSecurityQuestion() {
+            const forgotUsername = document.getElementById('forgotUsername').value.trim();
+            const user = JSON.parse(localStorage.getItem(forgotUsername));
+
+            if (user) {
+                document.getElementById('displaySecurityQuestion').textContent = user.securityQuestion;
+                document.getElementById('securityQuestionSection').style.display = 'block';
+            } else {
+                alert('Username not found.');
+            }
+        }
+
+        // Function to reset the password
+        function resetPassword() {
+            const forgotUsername = document.getElementById('forgotUsername').value.trim();
+            const forgotSecurityAnswer = document.getElementById('forgotSecurityAnswer').value.trim().toLowerCase();
+
+            const user = JSON.parse(localStorage.getItem(forgotUsername));
+
+            if (user && user.securityAnswer === forgotSecurityAnswer) {
+                const newPassword = prompt('Enter a new password:');
+                if (newPassword) {
+                    user.password = newPassword;
+                    localStorage.setItem(forgotUsername, JSON.stringify(user));
+                    alert('Password reset successfully!');
+                    showLoginSection();
+                }
+            } else {
+                alert('Incorrect security answer.');
+            }
+        }
+
+        // Function to handle file upload
+        function uploadFiles() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please log in to upload files.');
+                showLoginSection();
+                return;
+            }
+
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            if (files.length === 0) {
+                alert('No files selected.');
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem(currentUser));
+            for (let i = 0; i < files.length; i++) {
+                const file = {
+                    name: files[i].name,
+                    url: URL.createObjectURL(files[i])
+                };
+                user.files.push(file);
+            }
+
+            localStorage.setItem(currentUser, JSON.stringify(user));
+            alert('Files uploaded successfully!');
+            displayUserFiles();
+        }
+
+        // Function to display the user's uploaded files
+        function displayUserFiles() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please log in.');
+                showLoginSection();
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem(currentUser));
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            if (user.files.length === 0) {
+                fileList.innerHTML = '<li>No files uploaded yet.</li>';
+            } else {
+                user.files.forEach(file => {
+                    const li = document.createElement('li');
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = file.url;
+                    downloadLink.textContent = file.name;
+                    downloadLink.download = file.name;
+
+                    const shareLink = document.createElement('a');
+                    shareLink.href = file.url;
+                    shareLink.textContent = 'Share Link';
+                    shareLink.style.marginLeft = '10px';
+
+                    li.appendChild(downloadLink);
+                    li.appendChild(shareLink);
+                    fileList.appendChild(li);
+                });
+            }
+        }
+
+        // Function to handle user logout
+        function logout() {
+            localStorage.removeItem('currentUser');
+            alert('Logged out successfully!');
+            showLoginSection();
+        }
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('uploadSection').style.display = 'block';
+                document.getElementById('fileListSection').style.display = 'block';
+                displayUserFiles();
+            }
+        });
+    </script>
+</body>
+</html>
